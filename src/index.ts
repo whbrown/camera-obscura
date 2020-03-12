@@ -1,21 +1,29 @@
 /* eslint no-undef: 0 */
 /**
- * Required External Modules
- */
+// * Required External Modules
+**/
 
 import * as dotenv from "dotenv";
+import mysql from 'mysql2/promise';
 import express from "express";
+import bodyParser from 'body-parser';
 import cors from "cors";
 import helmet from "helmet";
 
-// * routers
+dotenv.config();
+
+// * routers *
 import { correspondentsRouter } from "./correspondents/correspondents.router";
 // *
 
-dotenv.config();
+// * middleware *
+
+import { errorHandler } from "./middleware/error.middleware";
+import { notFoundHandler } from "./middleware/notFound.middleware";
+// *
 
 /**
- * App Variables
+// * App Variables
 **/
 if (!process.env.PORT) {
   console.error('PORT undefined')
@@ -24,26 +32,35 @@ if (!process.env.PORT) {
 
 const PORT: number = parseInt(process.env.PORT as string, 10);
 
-const app = express();
-/**
- *  App Configuration
-**/
-
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
-app.use("/correspondents", correspondentsRouter);
+const server = express();
 
 /**
- * Server Activation
+// *  App Configuration
 **/
 
-const server = app.listen(PORT, () => {
+server.use(helmet());
+server.use(cors());
+server.use(express.json());
+server.use(bodyParser.urlencoded({
+  extended: true
+}));
+server.use("/api/v1/correspondents", correspondentsRouter);
+
+
+// ! closing request-response cycle, no routes after this point!
+server.use(errorHandler);
+server.use(notFoundHandler); // notFound catch-all, last middleware fn
+
+/**
+// * Server On & Listening
+**/
+
+const listeningServer = server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
 
 /**
- * Webpack HMR Activation
+// * Webpack HMR Activation
 **/
 
 type ModuleId = string | number;
@@ -65,5 +82,5 @@ declare const module: WebpackHotModule;
 
 if (module.hot) {
   module.hot.accept();
-  module.hot.dispose(() => server.close());
+  module.hot.dispose(() => listeningServer.close());
 }
