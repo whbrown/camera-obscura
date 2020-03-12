@@ -1,0 +1,31 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "env": {
+    "browser": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint/eslint-plugin"
+  ],
+  "rules": {
+    "@typescript-eslint/member-naming": [
+      "error",
+      {
+        "private": "^__",
+        "protected": "^_"
+      }
+    ]
+  },
+  "ignorePatterns": [
+    "*.js",
+    "*.spec.ts",
+    "*.test.ts"
+  ]
+}
