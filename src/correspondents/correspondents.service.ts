@@ -1,73 +1,62 @@
 /**
- * Interfaces
+// * Imported interfaces and external modules
 **/
-
+import mysql from 'mysql2/promise';
+import pool from '../mySqlPool';
+import * as dotenv from "dotenv";
 import { Correspondent } from './correspondent.interface';
 import { Correspondents } from './correspondents.interface';
-
-// dummy data
-
-// export interface Correspondent {
-//   id: number;
-//   fname: string;
-//   lname: string;
-//   DOB: Date;
-//   description: string;
-//   image: string;
-// }
-
-const correspondents = {
-  1: {
-    id: 1,
-    fname: 'Vincent',
-    lname: 'van Gogh',
-    DOB: new Date('1853/03/30'),
-    DOD: new Date('1890/07/29'),
-    description: 'loony painter!',
-    image: '/static/assets/vvangogh.png'
-  },
-  2: {
-    id: 2,
-    fname: 'Albert',
-    lname: 'Aurier',
-    DOB: new Date('1865/03/30'),
-    DOD: new Date('1892/10/05'),
-    description: 'loony aesthete & essayist!',
-    image: '/static/assets/aaurier.png'
-  }
-}
+import { Query } from 'mysql';
+dotenv.config();
 
 /**
  * Service methods
 **/
+type QueryResponse = mysql.OkPacket | mysql.RowDataPacket[] | mysql.RowDataPacket[][] | mysql.OkPacket[]
 
-export const findAll = async (): Promise<Correspondents> => {
-  const allCorrespondents: Correspondents = correspondents // await mysql `SELECT * FROM correspondents`
-  return allCorrespondents
-};
+export async function testPoolConnection(query: string): Promise<QueryResponse> {
+  const [rows] = await pool.query(query);
+  return rows;
+}
 
-export const find = async (id: number): Promise<Correspondent> => {
-  if (typeof id !== 'number') throw new TypeError('id is an invalid type. Number expected.');
-  const correspondent: Correspondent = correspondents[id as keyof typeof correspondents]; // await mysql `SELECT * FROM correspondents WHERE id = ${correspondent.id}`
-  if (correspondent) {
-    return correspondent;
+export async function findAll(): Promise<QueryResponse> {
+  const query = `SELECT * FROM correspondents`;
+  const [rows] = await pool.execute(query);
+  return rows;
+}
+
+export const find = async (id: number): Promise<QueryResponse> => {
+  const query = `SELECT * FROM correspondents WHERE id = ?`;
+  const [rows] = await pool.execute(query, [id]);
+  if (rows) {
+    return rows;
   }
   throw new Error('No record found');
 };
 
-export const create = /*async*/ (newCorrespondent: Correspondent): void/*Promise<void>*/ => {
-  // mysql INSERT INTO correspondents VALUES ()
+export async function create(newCorrespondent: Correspondent): Promise<QueryResponse> {
+  const columns = Object.keys(newCorrespondent) as (keyof Correspondent)[];
+  const values = columns.map(col => newCorrespondent[col]);
+  const query = `INSERT INTO correspondents (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`;
+  console.log('prepared statement:', query, values);
+  const [rows, fields] = await pool.execute(query, values);
+  console.log('fields', fields);
+  return rows;
 }
 
-export const update = /*async*/ (correspondent: Correspondent): void/*Promise<Correspondent>*/ => {
-  if (typeof correspondent.id !== 'number') throw new TypeError('correspondent.id is an invalid type. Number expected.');
-  // mysql `UPDATE correspondents SET () WHERE id = ${correspondent.id}`
-  // mysql `SELECT * FROM correspondents WHERE id = ${correspondent.id}`
+export async function update(correspondent: Correspondent, id: number): Promise<QueryResponse> {
+  const columns = Object.keys(correspondent) as (keyof Correspondent)[];
+  const values = columns.map(col => correspondent[col]);
+  const query = `UPDATE correspondents SET ${columns.map(col => `${col} = ?`)} WHERE id = ${id}`;
+  console.log('prepared statement:', query, values);
+  const [rows, fields] = await pool.execute(query, values);
+  console.log('fields', fields);
+  return rows;
 }
 
-export const remove = /*async*/ (id: number): void/*Promise<Correspondent>*/ => {
+export async function remove(id: number): Promise<mysql.OkPacket> {
   // delete is reserved term
-  if (typeof id !== 'number') throw new TypeError('correspondent.id is an invalid type. Number expected.');
-  // mysql `SELECT * FROM correspondents WHERE id = ${correspondent.id}`
-  // mysql `DELETE FROM correspondents WHERE id = ${correspondent.id}`
+  const query = `DELETE FROM correspondents WHERE id = ${id}`;
+  const [rows] = await pool.execute(query);
+  return rows as mysql.OkPacket;
 }

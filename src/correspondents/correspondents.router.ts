@@ -7,6 +7,7 @@ import * as CorrespondentsService from "./correspondents.service";
 import { Correspondent } from './correspondent.interface';
 import { Correspondents } from "./correspondents.interface";
 
+
 /**
  * Router declaration
 **/
@@ -17,13 +18,27 @@ export const correspondentsRouter = express.Router();
  * API routes
 **/
 
+// * GET correspondents/test
+
+// correspondentsRouter.get("/test", async (req: Request, res: Response) => {
+//   try {
+//     const q = 'SELECT NOW()';
+//     const result = await CorrespondentsService.testPoolConnection(q);
+//     return res.status(200).json(result);
+//   } catch (e) {
+//     res.status(404).json(e.message);
+//   }
+// });
+
 // * GET correspondents/
 
 correspondentsRouter.get("/", async (req: Request, res: Response) => {
   try {
-    const correspondents: Correspondents = await CorrespondentsService.findAll();
+    const correspondents = await CorrespondentsService.findAll();
+    if (!Object.keys(correspondents).length) res.status(200).json(null); // no records found
     res.status(200).json(correspondents);
   } catch (e) {
+    console.error(e);
     res.status(404).json(e.message);
   }
 });
@@ -31,11 +46,14 @@ correspondentsRouter.get("/", async (req: Request, res: Response) => {
 // * GET correspondents/:id
 
 correspondentsRouter.get("/:id", async (req: Request, res: Response) => {
-  const id: number = parseInt(req.params.id, 10);
   try {
-    const correspondent: Correspondent = await CorrespondentsService.find(id as 1 | 2);
+    const id: number = parseInt(req.params.id, 10);
+    if (isNaN(id)) throw new TypeError('ID parameter is an invalid type. Integer expected.');
+    const correspondent = await CorrespondentsService.find(id as 1 | 2);
+    if (!Object.keys(correspondent).length) res.status(200).json(null);  // no records found
     res.status(200).json(correspondent);
   } catch (e) {
+    console.error(e);
     res.status(404).json(e.message);
   }
 });
@@ -44,23 +62,27 @@ correspondentsRouter.get("/:id", async (req: Request, res: Response) => {
 
 correspondentsRouter.post("/", async (req: Request, res: Response) => {
   try {
-    const correspondent: Correspondent = req.body.item;
+    const correspondent: Correspondent = req.body;
     await CorrespondentsService.create(correspondent);
     res.sendStatus(201);
   } catch (e) {
+    console.error(e);
     res.status(404).json(e.message);
   }
 });
 
-// * PUT correspondents/
+// * PUT correspondents/:id
 
-correspondentsRouter.put("/", async (req: Request, res: Response) => {
+correspondentsRouter.put("/:id", async (req: Request, res: Response) => {
   try {
-    const correspondent: Correspondent = req.body.item;
-    await CorrespondentsService.update(correspondent);
-    res.sendStatus(200);
+    const id: number = parseInt(req.params.id, 10);
+    if (isNaN(id)) throw new TypeError('ID parameter is an invalid type. Integer expected.');
+    const correspondent: Correspondent = req.body;
+    await CorrespondentsService.update(correspondent, id);
+    res.sendStatus(204);
   } catch (e) {
-    res.status(500).send(e.message);
+    console.error(e);
+    res.status(400).json(e.message);
   }
 });
 
@@ -69,10 +91,12 @@ correspondentsRouter.put("/", async (req: Request, res: Response) => {
 correspondentsRouter.delete("/:id", async (req: Request, res: Response) => {
   try {
     const id: number = parseInt(req.params.id, 10);
-    await CorrespondentsService.remove(id);
+    if (isNaN(id)) throw new TypeError('ID parameter is an invalid type. Integer expected.');
+    const response = await CorrespondentsService.remove(id);
+    if (response.affectedRows === 0) res.status(404).json(`No correspondent found with id: ${id}`)
     res.sendStatus(200);
   } catch (e) {
-    res.status(500).send(e.message);
+    console.error(e);
+    res.status(500).json(e.message);
   }
 });
-
