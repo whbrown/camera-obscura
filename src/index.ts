@@ -4,7 +4,7 @@
 **/
 
 import * as dotenv from "dotenv";
-import mysql from 'mysql2/promise';
+// import mysql from 'mysql2/promise';
 import express from "express";
 import bodyParser from 'body-parser';
 import cors from "cors";
@@ -13,11 +13,10 @@ import helmet from "helmet";
 dotenv.config();
 
 // * routers *
-import { correspondentsRouter } from "./correspondents/correspondents.router";
+import { personsRouter } from "./persons/persons.router";
 // *
 
 // * middleware *
-
 import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/notFound.middleware";
 // *
@@ -29,40 +28,35 @@ if (!process.env.PORT) {
   console.error('PORT undefined')
   process.exit(1);
 }
-
 const PORT: number = parseInt(process.env.PORT as string, 10);
 
-const server = express();
+const app = express();
 
 /**
 // *  App Configuration
 **/
-
-server.use(helmet());
-server.use(cors());
-server.use(express.json());
-server.use(bodyParser.urlencoded({
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+app.use(bodyParser.urlencoded({
   extended: true
 }));
-server.use("/api/v1/correspondents", correspondentsRouter);
-
+app.use("/api/v1/persons", personsRouter);
 
 // ! closing request-response cycle, no routes after this point!
-server.use(errorHandler);
-server.use(notFoundHandler); // notFound catch-all, last middleware fn
+app.use(errorHandler);
+app.use(notFoundHandler); // notFound catch-all, last middleware fn
 
 /**
 // * Server On & Listening
 **/
-
-const listeningServer = server.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
 
 /**
 // * Webpack HMR Activation
 **/
-
 type ModuleId = string | number;
 
 interface WebpackHotModule {
@@ -82,5 +76,5 @@ declare const module: WebpackHotModule;
 
 if (module.hot) {
   module.hot.accept();
-  module.hot.dispose(() => listeningServer.close());
+  module.hot.dispose(() => server.close());
 }

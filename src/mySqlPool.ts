@@ -18,11 +18,11 @@ interface MySQLConfig {
 }
 
 const config = {
-  host: 'localhost',
-  user: 'node',
+  host: process.env.DB_HOST_NAME,
+  user: process.env.DB_USERNAME,
   // eslint-disable-next-line no-undef
-  password: process.env.NODE_PW,
-  database: 'vangogh',
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
