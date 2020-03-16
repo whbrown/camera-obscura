@@ -13,7 +13,7 @@ import helmet from "helmet";
 dotenv.config();
 
 // * routers *
-import { personsRouter } from "./persons/persons.router";
+import { personsRouter } from "./API/persons/persons.router";
 // *
 
 // * middleware *
@@ -38,8 +38,9 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
-  extended: true
+  extended: false // https://stackoverflow.com/questions/39870867/what-does-app-usebodyparser-json-do
 }));
 app.use("/api/v1/persons", personsRouter);
 
