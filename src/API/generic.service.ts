@@ -7,9 +7,10 @@ import * as dotenv from "dotenv";
 import { Person } from './persons/Person.interface';
 import { Letter } from './letters/Letter.interface';
 import { LookupLetterPerson } from './lookupTables/LookupLetterPerson.interface';
+import { LookupLetterRefPerson } from './lookupTables/LookupLetterRefPerson.interface';
 
-type Article = Person | Letter | LookupLetterPerson;
-type Table = 'persons' | 'letters' | 'lookup_letters_persons';
+type Article = Person | Letter | LookupLetterPerson | LookupLetterRefPerson;
+type Table = 'persons' | 'letters' | 'lookup_letters_persons' | 'lookup_letters_refpersons';
 
 dotenv.config();
 

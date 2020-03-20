@@ -14,10 +14,9 @@ dotenv.config();
 
 // * routers *
 import { personsRouter } from "./API/persons/persons.router";
-<<<<<<< Updated upstream
-=======
 import { lettersRouter } from './API/letters/letters.router';
->>>>>>> Stashed changes
+import { lookupLettersPersonsRouter } from './API/lookupTables/lookupLettersPersons.router';
+import { lookupLettersRefPersonsRouter } from './API/lookupTables/lookupLettersRefPersons.router';
 // *
 
 // * middleware *
@@ -47,10 +46,10 @@ app.use(bodyParser.urlencoded({
   extended: false // https://stackoverflow.com/questions/39870867/what-does-app-usebodyparser-json-do
 }));
 app.use("/api/v1/persons", personsRouter);
-<<<<<<< Updated upstream
-=======
 app.use("/api/v1/letters", lettersRouter);
->>>>>>> Stashed changes
+app.use("/api/v1/lookup_letters_persons", lookupLettersPersonsRouter);
+app.use("/api/v1/lookup_letters_refpersons", lookupLettersRefPersonsRouter);
+
 
 // ! closing request-response cycle, no routes after this point!
 app.use(errorHandler);

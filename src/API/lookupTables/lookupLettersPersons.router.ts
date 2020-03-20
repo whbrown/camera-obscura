@@ -13,7 +13,7 @@ import { LookupLetterPerson } from './LookupLetterPerson.interface';
 // * Router declaration
 **/
 
-export const lookupLetterPersonRouter = express.Router();
+export const lookupLettersPersonsRouter = express.Router();
 
 /**
 // * API routes
@@ -21,7 +21,7 @@ export const lookupLetterPersonRouter = express.Router();
 
 // * GET lookupLetterPerson/test
 
-// lookupLetterPersonRouter.get("/test", async (req: Request, res: Response) => {
+// lookupLettersPersonsRouter.get("/test", async (req: Request, res: Response) => {
 //   try {
 //     const q = 'SELECT NOW()';
 //     const result = await lookupLetterPersonService.testPoolConnection(q);
@@ -34,7 +34,7 @@ export const lookupLetterPersonRouter = express.Router();
 // * GET lookupLetterPerson/ 
 // get all lookupLetterPerson
 
-lookupLetterPersonRouter.get("/", async (req: Request, res: Response) => {
+lookupLettersPersonsRouter.get("/", async (req: Request, res: Response) => {
   try {
     const lookupLetterPerson = await lookupLetterPersonService.findAll<LookupLetterPerson>('lookup_letters_persons');
     // console.log(lookupLetterPerson);
@@ -49,7 +49,7 @@ lookupLetterPersonRouter.get("/", async (req: Request, res: Response) => {
 // * GET lookupLetterPerson/:id 
 // get letter by id
 
-lookupLetterPersonRouter.get("/:id", async (req: Request, res: Response) => {
+lookupLettersPersonsRouter.get("/:id", async (req: Request, res: Response) => {
   try {
     const id: number = parseInt(req.params.id, 10);
     if (isNaN(id)) throw new TypeError('ID parameter is an invalid type. Integer expected.');
@@ -64,14 +64,14 @@ lookupLetterPersonRouter.get("/:id", async (req: Request, res: Response) => {
 
 // * Mount authorization middleware
 
-// lookupLetterPersonRouter.use(checkJwt);
+// lookupLettersPersonsRouter.use(checkJwt);
 
 // ! all controllers from here on down are protected, and require an access JSON Web Token
 
 // * POST lookupLetterPerson/ 
 // post a letter
 
-lookupLetterPersonRouter.post("/", async (req: Request, res: Response) => {
+lookupLettersPersonsRouter.post("/", async (req: Request, res: Response) => {
   try {
     const letter: LookupLetterPerson = req.body;
     await lookupLetterPersonService.create<LookupLetterPerson>(letter, 'lookup_letters_persons');
@@ -84,7 +84,7 @@ lookupLetterPersonRouter.post("/", async (req: Request, res: Response) => {
 
 // * PUT lookupLetterPerson/:id
 
-lookupLetterPersonRouter.put("/:id", async (req: Request, res: Response) => {
+lookupLettersPersonsRouter.put("/:id", async (req: Request, res: Response) => {
   try {
     const id: number = parseInt(req.params.id, 10);
     if (isNaN(id)) throw new TypeError('ID parameter is an invalid type. Integer expected.');
@@ -99,9 +99,9 @@ lookupLetterPersonRouter.put("/:id", async (req: Request, res: Response) => {
 
 // * DELETE lookupLetterPerson/:id
 
-// lookupLetterPersonRouter.use(checkJwt);
+// lookupLettersPersonsRouter.use(checkJwt);
 
-lookupLetterPersonRouter.delete("/:id", async (req: Request, res: Response) => {
+lookupLettersPersonsRouter.delete("/:id", async (req: Request, res: Response) => {
   try {
     const id: number = parseInt(req.params.id, 10);
     if (isNaN(id)) throw new TypeError('ID parameter is an invalid type. Integer expected.');

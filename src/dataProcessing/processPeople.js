@@ -34,4 +34,3 @@ const letters = letterLis.reduce((acc, li) => {
     return acc;
   }
 }, {});
-whbrown

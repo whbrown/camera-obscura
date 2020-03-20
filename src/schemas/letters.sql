@@ -24,11 +24,3 @@ CREATE TABLE letters (
   INDEX destination_loc (destination_loc),
   INDEX catalogue_code (catalogue_code)
 ) ENGINE = innodb DEFAULT CHARSET = UTF8MB4 DEFAULT COLLATE = UTF8MB4_unicode_ci;
-
-select case 
-when surname like '%van gogh%' then 'van gogh'
-else 'other'
-end as family,
-count(*) as members
-from persons
-group by family;

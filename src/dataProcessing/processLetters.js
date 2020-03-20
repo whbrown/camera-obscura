@@ -5,23 +5,21 @@ const letters = require('./letters.json');
 
 const getDatePrecision = (datesArr) => {
   let pattern = / (about|or) /;
-  // yes...yes... bad code smell from successive ifs, but it's the easiest way to encode different precisions as a TINYINT
-  let datePrecision = 0;
     if (datesArr.length === 1 && (!/\s*\d{1,2} /.test(datesArr[0])))
-      return 7;
+      return 7; // 7. distant approximation
     if (datesArr.length === 1 && !pattern.test(datesArr[0]))
-      return 1;
+      return 1; // 1. ok;
     if (datesArr.length === 1 && pattern.test(datesArr[0]))
-      return 2;
+      return 2; // 2. close-approx;
     if (datesArr.length === 2 && (!pattern.test(datesArr[0]) && !pattern.test(datesArr[1])))
-      return 3;
+      return 3; // 3. known range; 
     if (datesArr.length === 2 && (!pattern.test(datesArr[0]) && pattern.test(datesArr[1])))
-      return 4;
+      return 4; //  4. range, first date known, second approx.;
     if (datesArr.length === 2 && (pattern.test(datesArr[0]) && !pattern.test(datesArr[1])))
-      return 5;
+      return 5; //  5. range first approx, second known;
     if (datesArr.length === 2 && (pattern.test(datesArr[0]) && pattern.test(datesArr[1])))
-      return 6;
-    return 0;
+      return 6; // 6. both approx.,
+    return 0; // 0. unknown;
 }
 
 const datesByLetter = Object.keys(letters).reduce((datesByLetter, letter) => {
