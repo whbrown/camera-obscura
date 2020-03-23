@@ -39,7 +39,7 @@ lettersRouter.get("/", async (req: Request, res: Response) => {
     const letters = await LettersService.findAll<Letter>('letters');
     // console.log(Letters);
     if (!letters.length) res.status(200).json(null); // no records found
-    res.status(200).json(letters);
+    else res.status(200).json(letters);
   } catch (e) {
     console.error(e);
     res.status(404).json(e.message);

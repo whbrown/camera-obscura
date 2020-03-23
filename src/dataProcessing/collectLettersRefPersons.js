@@ -29,7 +29,6 @@ try {
   letterRefCodes = [];
 }
 const [gname, surname] = extractName(name);
-console.log(birthYear, deathYear);
 if (birthYear) {
   [birthYear,] = new Date(birthYear).toISOString().match(/\d{1,4}/); // grab just Date from DateTime
 } else {

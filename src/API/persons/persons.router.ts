@@ -39,7 +39,7 @@ personsRouter.get("/", async (req: Request, res: Response) => {
     const Persons = await PersonsService.findAll<Person>('persons');
     // console.log(Persons);
     if (!Persons.length) res.status(200).json(null); // no records found
-    res.status(200).json(Persons);
+    else res.status(200).json(Persons);
   } catch (e) {
     console.error(e);
     res.status(404).json(e.message);
@@ -72,7 +72,8 @@ personsRouter.get("/:id", async (req: Request, res: Response) => {
 personsRouter.post("/", async (req: Request, res: Response) => {
   try {
     const Person: Person = req.body;
-    await PersonsService.create<Person>(Person, 'persons');
+    const { insertId } = await PersonsService.create<Person>(Person, 'persons');
+    res.location(`/api/v1/lookup_letters_refpersons/${insertId}`);
     res.sendStatus(201);
   } catch (e) {
     console.error(e);

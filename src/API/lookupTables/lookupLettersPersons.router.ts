@@ -39,7 +39,7 @@ lookupLettersPersonsRouter.get("/", async (req: Request, res: Response) => {
     const lookupLetterPerson = await lookupLetterPersonService.findAll<LookupLetterPerson>('lookup_letters_persons');
     // console.log(lookupLetterPerson);
     if (!lookupLetterPerson.length) res.status(200).json(null); // no records found
-    res.status(200).json(lookupLetterPerson);
+    else res.status(200).json(lookupLetterPerson);
   } catch (e) {
     console.error(e);
     res.status(404).json(e.message);

@@ -17,6 +17,7 @@ import { personsRouter } from "./API/persons/persons.router";
 import { lettersRouter } from './API/letters/letters.router';
 import { lookupLettersPersonsRouter } from './API/lookupTables/lookupLettersPersons.router';
 import { lookupLettersRefPersonsRouter } from './API/lookupTables/lookupLettersRefPersons.router';
+import { historicalObjectsRouter } from "./API/historicalObjects/historicalObjects.router";
 // *
 
 // * middleware *
@@ -49,6 +50,7 @@ app.use("/api/v1/persons", personsRouter);
 app.use("/api/v1/letters", lettersRouter);
 app.use("/api/v1/lookup_letters_persons", lookupLettersPersonsRouter);
 app.use("/api/v1/lookup_letters_refpersons", lookupLettersRefPersonsRouter);
+app.use("/api/v1/historical_objects", historicalObjectsRouter);
 
 
 // ! closing request-response cycle, no routes after this point!

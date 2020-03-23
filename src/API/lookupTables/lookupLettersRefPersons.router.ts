@@ -39,7 +39,7 @@ lookupLettersRefPersonsRouter.get("/", async (req: Request, res: Response) => {
     const LookupLetterRefPerson = await LookupLetterRefPersonService.findAll<LookupLetterRefPerson>('lookup_letters_refpersons');
     // console.log(LookupLetterRefPerson);
     if (!LookupLetterRefPerson.length) res.status(200).json(null); // no records found
-    res.status(200).json(LookupLetterRefPerson);
+    else res.status(200).json(LookupLetterRefPerson);
   } catch (e) {
     console.error(e);
     res.status(404).json(e.message);
@@ -74,7 +74,7 @@ lookupLettersRefPersonsRouter.get("/:id", async (req: Request, res: Response) =>
 lookupLettersRefPersonsRouter.post("/", async (req: Request, res: Response) => {
   try {
     const letter: LookupLetterRefPerson = req.body;
-    await LookupLetterRefPersonService.create<LookupLetterRefPerson>(letter, 'lookup_letters_refpersons');
+    const { insertId } = await LookupLetterRefPersonService.create<LookupLetterRefPerson>(letter, 'lookup_letters_refpersons');
     res.sendStatus(201);
   } catch (e) {
     console.error(e);

@@ -8,9 +8,10 @@ import { Person } from './persons/Person.interface';
 import { Letter } from './letters/Letter.interface';
 import { LookupLetterPerson } from './lookupTables/LookupLetterPerson.interface';
 import { LookupLetterRefPerson } from './lookupTables/LookupLetterRefPerson.interface';
+import { HistoricalObject } from './historicalObjects/HistoricalObject.interface';
 
-type Article = Person | Letter | LookupLetterPerson | LookupLetterRefPerson;
-type Table = 'persons' | 'letters' | 'lookup_letters_persons' | 'lookup_letters_refpersons';
+type Article = Person | Letter | LookupLetterPerson | LookupLetterRefPerson | HistoricalObject;
+type Table = 'persons' | 'letters' | 'lookup_letters_persons' | 'lookup_letters_refpersons' | 'objects';
 
 dotenv.config();
 
@@ -46,7 +47,7 @@ export async function create<T extends Article>(newArticle: T, tableName: Table)
   const values = columns.map(col => newArticle[col]);
   const query = `INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`;
   console.log('prepared statement:', query, values);
-  const [rows] = await pool.execute<mysql.OkPacket>(query, values);
+  const [rows,] = await pool.execute<mysql.OkPacket>(query, values);
   return rows;
 }
 
@@ -55,9 +56,7 @@ export async function update<T extends Article>(Article: T, id: number, tableNam
   const values = columns.map(col => Article[col]);
   const query = `UPDATE ${tableName} SET ${columns.map(col => `${col} = ?`)} WHERE id = ${id}`;
   console.log('prepared statement:', query, values);
-  const [rows, fields] = await pool.execute<mysql.OkPacket>(query, values);
-  console.log('fields', fields);
-  console.log('rows', rows);
+  const [rows,] = await pool.execute<mysql.OkPacket>(query, values);
   return rows;
 }
 
